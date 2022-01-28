@@ -99,7 +99,7 @@ else
 fi
 
 # Mount deCONZ data-disk in container
-lxc config device add $NAME deconz-data disk source=$VOLUME pool=$POOL path=/home/$USERNAME/.local/share/dresden-elektronik/deCONZ
+lxc config device add $NAME $VOLUME disk source=$VOLUME pool=$POOL path=/home/$USERNAME/.local/share/dresden-elektronik/deCONZ
 
 # Fix permissions
 lxc exec $NAME -- sh -c "chown -R $USERNAME:$USERNAME /home/$USERNAME/.local/share/dresden-elektronik/deCONZ"
