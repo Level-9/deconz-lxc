@@ -1,1 +1,122 @@
 #!/bin/sh
+
+########################################################################################################################################
+# Shell-script to create and run a LXC-container running the deCONZ- and Phoscon software as described on https://www.phoscon.de/      #
+# This script and the latest version is hosted on github at https://github.com/Level-9/deconz-lxc                                      #
+# Released under the MIT license.                                                                                                      #
+# Copyright (c) 2022 Lars Nordgren                                                                                                     #          
+# Please adjust the variables below to your requirements. You will need a functional install of lxc on the host to run this script.    #
+# Se the docs in the GitHub repo for more information.                                                                                 #
+########################################################################################################################################
+
+# Variables
+
+# The path to your ConBee-dongle
+DEVICE="/dev/ttyUSB0"
+
+# The name of the container
+NAME="deCONZ-2"
+
+# The user running the processes
+USERNAME="deconz"
+
+# The deCONZ service users and service password (must be changed).
+PASSWD="Do-not-use-this-password!"
+
+# Timezone
+TIMEZONE=Europe/Stockholm
+
+# LXC Image
+IMAGE="images:ubuntu/20.04"
+
+# Name of storage pool for deCONZ volume. Do not change unless you know what you are doing. Pool must exist before the script is executed.
+POOL="default"
+
+# Name of storage volume for deCONZ SQL-lite-database and config.
+VOLUME="deCONZ-DATA"
+
+# Startup options
+OPTIONS="-platform minimal http-port=80 --dbg-error=1 --auto-connect=1 --upnp=0 --dev=$DEVICE"
+
+########################################################################################################################################
+
+
+# Check if password is default,  if so then exit.
+if [ $PASSWD = "Do-not-use-this-   password!" ];
+then
+       ############ Fixa innan släpp ################	
+	echo "Exiting because the default password was unaltered."
+	exit 1
+fi
+
+
+# Check if instance named $NAME already is running.
+if lxc list | grep -q $NAME ;
+then 
+	echo "A container named $NAME already exists - aborting."
+        exit 1 
+else
+	# Launch container.
+	lxc launch $IMAGE $NAME 
+fi
+
+
+# Just to be sure, if you choose an other cloud-ready image, then wait for cloud-init to run.
+echo "Info: Waiting for Cloud-Init if relevant image has been choosen.."
+lxc exec $NAME -- sh -c 'cloud-init status --wait'
+
+
+# Install deCONZ software requirements.
+lxc exec $NAME -- sh -c 'apt-get -yqq install wget gnupg2'
+
+# Make the USB-dongle or Pi-hat available in the container.
+lxc config device add $NAME conbee unix-char path=$DEVICE
+lxc config device set $NAME conbee mode 666
+
+# Set timezone
+lxc exec $NAME -- sh -c "timedatectl set-timezone $TIMEZONE" 
+
+# Create deCONZ user
+lxc exec $NAME -- sh -c "useradd -m -d /home/$USERNAME $USERNAME"
+lxc exec $NAME -- sh -c "echo $USERNAME:$PASSWD | chpasswd"
+lxc exec $NAME -- sh -c "usermod -a -G dialout $USERNAME"
+
+# Check if storage pool named $POOL already exists.
+if lxc storage list | grep -q " $POOL " ;
+then 
+	echo "Info: Choosen storage pool $POOL found."
+else
+	echo "ERROR: Exiting because the pool $POOL does not exist. "
+	exit 1
+fi
+
+if lxc storage volume list $POOL | grep -q " $VOLUME " ; 
+then
+	echo Info: Choosen storage volume already exists.
+else 
+	# $POOL exists but not volume. Let create it.
+	echo "Info: creating volume $VOLUME"
+	lxc storage volume create $POOL $VOLUME 
+fi
+
+# Mount deCONZ data-disk in container
+lxc config device add $NAME deconz-data disk source=$VOLUME pool=$POOL path=/home/$USERNAME/.local/share/dresden-elektronik/deCONZ
+
+# Fix permissions
+lxc exec $NAME -- sh -c "chown -R $USERNAME:$USERNAME /home/$USERNAME/.local/share/dresden-elektronik/deCONZ"
+
+# Install deCONZ software
+lxc exec $NAME -- sh -c 'wget -O - http://phoscon.de/apt/deconz.pub.key | apt-key add -'
+lxc exec $NAME -- sh -c 'echo "deb [arch=amd64] http://phoscon.de/apt/deconz $(lsb_release -cs) main" > /etc/apt/sources.list.d/deconz.list'
+lxc exec $NAME -- sh -c 'apt-get -q update'
+lxc exec $NAME -- sh -c 'apt-get -yqq install deconz'
+
+# Service
+lxc exec $NAME -- sh -c "mkdir /etc/systemd/system/deconz.service.d"
+lxc exec $NAME -- sh -c "echo [Service] > /etc/systemd/system/deconz.service.d/override.conf"
+lxc exec $NAME -- sh -c "echo User=1001 >> /etc/systemd/system/deconz.service.d/override.conf"
+lxc exec $NAME -- sh -c "echo ExecStart= >> /etc/systemd/system/deconz.service.d/override.conf"
+lxc exec $NAME -- sh -c "echo ExecStart=/usr/bin/deCONZ $OPTIONS >> /etc/systemd/system/deconz.service.d/override.conf"
+lxc exec $NAME systemctl enable deconz
+lxc exec $NAME systemctl start deconz
+
