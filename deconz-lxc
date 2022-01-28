@@ -42,9 +42,8 @@ OPTIONS="-platform minimal http-port=80 --dbg-error=1 --auto-connect=1 --upnp=0 
 
 
 # Check if password is default,  if so then exit.
-if [ $PASSWD = "Do-not-use-this-   password!" ];
+if [ $PASSWD = "Do-not-use-this-password!" ];
 then
-       ############ Fixa innan släpp ################	
 	echo "Exiting because the default password was unaltered."
 	exit 1
 fi
