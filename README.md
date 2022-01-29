@@ -2,7 +2,7 @@
 ## Code and documentation to run the deCONZ software in a LXC-container.
 
 ### Overview ###
-This is the documentation for how to run the [deCONZ-software](https://www.dresden-elektronik.com/wireless/software/deconz.htm) as provided by dresden elektronik and [Phoscon](phoscon.de) in an unprivilleged LXD-container. [LXC](https://linuxcontainers.org) is an alternative to the popular Docker platform. Both technologies has their pros and cons, therefore - do your own due dilligence before choosing plattform.
+This is the documentation for how to run the [deCONZ-software](https://www.dresden-elektronik.com/wireless/software/deconz.htm) as provided by dresden elektronik and [Phoscon](phoscon.de), as a daemon, in an unprivilleged LXD-container. [LXC](https://linuxcontainers.org) is an alternative to the popular Docker platform. Both technologies has their pros and cons, therefore - do your own due dilligence before choosing plattform.
 
 A zigbee dongle, i.e. a ConBee USB-gateway is required to run the software.
 
@@ -51,8 +51,43 @@ Depending on your home-network setup simply point the browser of your choice to 
 ### Accessing the deCONZ Gui application ###
 LXC-container behaives slightly different than Docker containers. LXC-container's are more similar to standard vitual machines in that sense that standard support for running daemons (i.e. systemd) is present and therefore it is really no problem to install VNC in the container afterwards, if you require it. If you chose to use SSH to access the container, then `ssh -X yourcontainername` could be an alternative if you have sufficient network throughput.
 
+### So where is my data? ###
+If you let all storage option remain the default values, then the configuration is stored on the default pool under the name "deCONZ-data". To list the storage pools enter: `lxc storage ls`.
+
+    +---------+--------+--------------------------------------------+-------------+---------+
+    |  NAME   | DRIVER |                   SOURCE                   | DESCRIPTION | USED BY |
+    +---------+--------+--------------------------------------------+-------------+---------+
+    | default | zfs    | /var/snap/lxd/common/lxd/disks/default.img |             | 2       |
+    +---------+--------+--------------------------------------------+-------------+---------+
+
+Then to list the content of the default pool enter: `lxc storage volume ls default`
+
+    +----------------------------+------------------------------------------------------------------+-------------+--------------+---------+
+    |            TYPE            |                               NAME                               | DESCRIPTION | CONTENT-TYPE | USED BY |
+    +----------------------------+------------------------------------------------------------------+-------------+--------------+---------+
+    | container                  | deCONZ                                                           |             | filesystem   | 1       |
+    +----------------------------+------------------------------------------------------------------+-------------+--------------+---------+
+    | custom                     | deCONZ-DATA                                                      |             | filesystem   | 1       |
+    +----------------------------+------------------------------------------------------------------+-------------+--------------+---------+
+
+Note that the deCONZ-DATA field "TYPE" is "custom" for your persistent data.
+
+If you would like to access the files without having to go through the container the can be found in your hosts file system while the container is running. However it is only accessible from the correct namespace as root. Enter the correct namespace as root by enter: `sudo nsenter -t $(cat /var/snap/lxd/common/lxd.pid) -m` 
+
+Then you can list the files.
+
+`ls /var/snap/lxd/common/lxd/storage-pools/default/custom/default_deCONZ-DATA`
+
+    root@yourcomputer:/var/snap/lxd/common/lxd/storage-pools/default/custom/default_deCONZ-DATA# ls
+    config.ini  devices zcldb.txt  zll.db
+
+For more info about how to access container files please visit https://blog.simos.info/how-to-view-the-files-of-your-lxd-container-from-the-host/
+
+### Upgrading ###
+Normally you could and should upgrade and refresh your installation by entering `sudo apt-get update && sudo apt-get uppgrade`. Since the deCONZ repository is added the deCONZ software updates also.
+
+**You must of cource always make a backup using the Phoscon app before making any changes** but it should also be safe to simply delete the container and rerun the deconz-lxc script. The volume deCONZ-DATA should be re-attached and all configuration intact.
+
 ### Other notes ###
 The deCONZ update service is not run under your choosen user. It is still being run by root.
 
-### So where is my data? ###
-To be continued... 
