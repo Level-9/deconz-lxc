@@ -2,13 +2,13 @@
 ## Code and documentation to run the deCONZ software in a LXC-container.
 
 ### Overview ###
-This is the documentation for how to run the [deCONZ-software](https://www.dresden-elektronik.com/wireless/software/deconz.htm) as provided by dresden elektronik and [Phoscon](phoscon.de), as a daemon, in an unprivilleged LXD-container. [LXC](https://linuxcontainers.org) is an alternative to the popular Docker platform. Both technologies has their pros and cons, therefore - do your own due dilligence before choosing plattform.
-
-A zigbee dongle, i.e. a ConBee USB-gateway is required to run the software.
+This is the documentation for how to run the [deCONZ-software](https://www.dresden-elektronik.com/wireless/software/deconz.htm) as provided by dresden elektronik and [Phoscon](phoscon.de), as a daemon, in an unprivilleged LXC-container. [LXC](https://linuxcontainers.org) is an alternative to the popular Docker platform. Both technologies has their pros and cons, therefore - do your own due dilligence before choosing plattform.
 
 A lot of Linux distributions support LXD and LXC but this documentation focus on the required steps for Ubuntu Server using snap. The instructions will be similar for other distributions that support snapd.
 
 ### Prerequisites ###
+A zigbee dongle, i.e. a ConBee USB-gateway is required to run the software.
+
 Make sure that you are running a distribution that supports snaps. Most Ubuntu flavors supports snaps out of the box but if you are running a different Linux flavor then please check out the documentation for [installing](https://snapcraft.io/docs/installing-snapd) snapd.
 
 When snapd is installed the installation of LXD is as simple as: `sudo snap install lxd`.
@@ -86,7 +86,7 @@ For more info about how to access container files please visit https://blog.simo
 ### Upgrading ###
 Normally you could and should upgrade and refresh your installation by entering `sudo apt-get update && sudo apt-get uppgrade`. Since the deCONZ repository is added the deCONZ software updates also.
 
-**You must of cource always make a backup using the Phoscon app before making any changes** but it should also be safe to simply delete the container and rerun the deconz-lxc script. The volume deCONZ-DATA should be re-attached and all configuration intact.
+**You must of course always make a backup using the Phoscon app before making any changes** but it should also be safe to simply delete the container and rerun the deconz-lxc script. The volume deCONZ-DATA should be re-attached and all configuration intact.
 
 ### Other notes ###
 The deCONZ update service is not run under your choosen user. It is still being run by root.
