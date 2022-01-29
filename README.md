@@ -6,14 +6,14 @@ This is the documentation for how to run the [deCONZ-software](https://www.dresd
 
 A zigbee dongle, i.e. a ConBee USB-gateway is required to run the software.
 
-A lot of Linux distributions support LXD and LXC but this documentation focus on the required steps for Ubuntu Server using snap but the instructions will be similar for other distributions that support snapd.
+A lot of Linux distributions support LXD and LXC but this documentation focus on the required steps for Ubuntu Server using snap. The instructions will be similar for other distributions that support snapd.
 
 ### Prerequisites ###
-Make sure that you are running a distribution that supports snaps. Most Ubuntu flavors supports snaps out of tha box but if you are running a different Linux flavor then please check out the documentation for [installing](https://snapcraft.io/docs/installing-snapd) snapd.
+Make sure that you are running a distribution that supports snaps. Most Ubuntu flavors supports snaps out of the box but if you are running a different Linux flavor then please check out the documentation for [installing](https://snapcraft.io/docs/installing-snapd) snapd.
 
 When snapd is installed the installation of LXD is as simple as: `sudo snap install lxd`.
 
-After that you need to configure the LXD-daemon. This is done by entering this command: `sudo lxd init`, or for a slightly simpler setup: `sudo lxd init --minimal`. It is beyonde the scope of this documentation to explain all the configuration options, please see the official sites documentation for that. The defaults will most likely be fine.
+After that you need to configure the LXD-daemon. This is done by entering this command: `sudo lxd init`, or for a slightly simpler setup: `sudo lxd init --minimal`. It is beyond the scope of this documentation to explain all the configuration options, please see the official sites documentation for that. The defaults will most likely be fine.
 
 When this is done enter the command `lxc list` to make sure everything is working. An empty list should be returned, since you don't have any running containers or virtual machines yet.
 
@@ -46,7 +46,7 @@ After editing, simply enter `./deconz-lxc` and the script should create the spec
 By default he LXC-containers might not be accessible from outside the connected network. Please review the documentation for more information about this. Your setup and your security requirements are unknown to me and therefore I cannot guide you any further on this topic.
 
 ### Accessing the Phoscon Web-App ###
-Depending on your home-network setup simply point the browser of your choice to the ip-adress of your container as listed earlier or to the name of the container if you have configured proper name reoulution.
+Depending on your home-network setup simply point the browser of your choice to the ip-adress of your container as listed earlier or to the name of the container if you have configured proper name resolution.
 
 ### Accessing the deCONZ Gui application ###
 LXC-container behaives slightly different than Docker containers. LXC-container's are more similar to standard vitual machines in that sense that standard support for running daemons (i.e. systemd) is present and therefore it is really no problem to install VNC in the container afterwards, if you require it. If you chose to use SSH to access the container, then `ssh -X yourcontainername` could be an alternative if you have sufficient network throughput.
@@ -54,4 +54,5 @@ LXC-container behaives slightly different than Docker containers. LXC-container'
 ### Other notes ###
 The deCONZ update service is not run under your choosen user. It is still being run by root.
 
- 
+### So where is my data? ###
+To be continued... 
