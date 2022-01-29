@@ -17,16 +17,16 @@ After that you need to configure the LXD-daemon. This is done by entering this c
 
 When this is done enter the command `lxc list` to make sure everything is working. An empty list should be returned, since you don't have any running containers or virtual machines yet.
 
-+-------------+---------+------------------------+------+-----------------+-----------+
-|    NAME     |  STATE  |          IPV4          | IPV6 |      TYPE       | SNAPSHOTS |
-+-------------+---------+------------------------+------+-----------------+-----------+
+    +-------------+---------+------------------------+------+-----------------+-----------+
+    |    NAME     |  STATE  |          IPV4          | IPV6 |      TYPE       | SNAPSHOTS |
+    +-------------+---------+------------------------+------+-----------------+-----------+
 
 ### Editing the script ### 
 The first part of the script sets some variables that define hove the software and daemon sould be run.
 
 - `DEVICE` (The path of your Conbee Zigbee gateway. E.g. "/dev/ttyUSB0").  
 - `NAME` (The desired name of the container).
-- `USERNAME (The none-privileged user running the deCONZ-daemon).
+- `USERNAME` (The none-privileged user running the deCONZ-daemon).
 - `PASSWD` (The password of the user. The password must be changed or the script will fail).
 - `TIMEZONE` (Set it to your location. For a list of possible values enter `timedatectl list-timezones`).
 - `IMAGE` (The Ubuntu image to use).
@@ -37,11 +37,11 @@ The first part of the script sets some variables that define hove the software a
 ### Running the script ###
 After editing, simply enter `./deconz-lxc` and the script should create the specified container and install the deCONZ software. If you chosed to use a cloud-init aware image then the script will wait for cloud-init to complete. If you didn't then ignore the message that states that cloud-init was not found. If you enter `lxc list` again then the container sould be listed.
 
-+-------------+---------+------------------------+------+-----------------+-----------+
-|    NAME     |  STATE  |          IPV4          | IPV6 |      TYPE       | SNAPSHOTS |
-+-------------+---------+------------------------+------+-----------------+-----------+
-| deCONZ      | RUNNING | 172.16.11.50 (eth0)    |      | CONTAINER       | 0         |
-+-------------+---------+------------------------+------+-----------------+-----------+
+    +-------------+---------+------------------------+------+-----------------+-----------+
+    |    NAME     |  STATE  |          IPV4          | IPV6 |      TYPE       | SNAPSHOTS |
+    +-------------+---------+------------------------+------+-----------------+-----------+
+    | deCONZ      | RUNNING | 172.16.11.50 (eth0)    |      | CONTAINER       | 0         |
+    +-------------+---------+------------------------+------+-----------------+-----------+
 
 By default he LXC-containers might not be accessible from outside the connected network. Please review the documentation for more information about this. Your setup and your security requirements are unknown to me and therefore I cannot guide you any further on this topic.
 
