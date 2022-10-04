@@ -22,7 +22,7 @@ When this is done enter the command `lxc list` to make sure everything is workin
     +-------------+---------+------------------------+------+-----------------+-----------+
 
 ### Editing the script ### 
-The first part of the script sets some variables that define hove the software and daemon sould be run.
+The first part of the script sets some variables that define how the software and daemon sould be run.
 
 - `DEVICE` (The path of your Conbee Zigbee gateway. E.g. "/dev/ttyUSB0").  
 - `NAME` (The desired name of the container).
