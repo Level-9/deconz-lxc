@@ -22,7 +22,7 @@ When this is done enter the command `lxc list` to make sure everything is workin
     +-------------+---------+------------------------+------+-----------------+-----------+
 
 ### Editing the script ### 
-The first part of the script sets some variables that define how the software and daemon sould be run.
+The first part of the script sets some variables that define how the software and daemon should be run.
 
 - `DEVICE` (The path of your Conbee Zigbee gateway. E.g. "/dev/ttyUSB0").  
 - `NAME` (The desired name of the container).
@@ -35,7 +35,7 @@ The first part of the script sets some variables that define how the software an
 - `OPTIONS` (The options used to start the daemon).
 
 ### Running the script ###
-After editing, simply enter `./deconz-lxc` and the script should create the specified container and install the deCONZ software. If you chosed to use a cloud-init aware image then the script will wait for cloud-init to complete. If you didn't then ignore the message that states that cloud-init was not found. If you enter `lxc list` again then the container sould be listed.
+After editing, simply enter `./deconz-lxc` and the script should create the specified container and install the deCONZ software. If you chose to use a cloud-init aware image then the script will wait for cloud-init to complete. If you didn't then ignore the message that states that cloud-init was not found. If you enter `lxc list` again then the container sould be listed.
 
     +-------------+---------+------------------------+------+-----------------+-----------+
     |    NAME     |  STATE  |          IPV4          | IPV6 |      TYPE       | SNAPSHOTS |
@@ -43,7 +43,7 @@ After editing, simply enter `./deconz-lxc` and the script should create the spec
     | deCONZ      | RUNNING | 172.16.11.50 (eth0)    |      | CONTAINER       | 0         |
     +-------------+---------+------------------------+------+-----------------+-----------+
 
-By default he LXC-containers might not be accessible from outside the connected network. Please review the documentation for more information about this. Your setup and your security requirements are unknown to me and therefore I cannot guide you any further on this topic.
+By default the LXC-containers might not be accessible from outside the connected network. Please review the documentation for more information about this. Your setup and your security requirements are unknown to me and therefore I cannot guide you any further on this topic.
 
 ### Accessing the Phoscon Web-App ###
 Depending on your home-network setup simply point the browser of your choice to the ip-adress of your container as listed earlier or to the name of the container if you have configured proper name resolution.
@@ -52,7 +52,7 @@ Depending on your home-network setup simply point the browser of your choice to 
 LXC-container behaives slightly different than Docker containers. LXC-container's are more similar to standard vitual machines in that sense that standard support for running daemons (i.e. systemd) is present and therefore it is really no problem to install VNC in the container afterwards, if you require it. If you chose to use SSH to access the container, then `ssh -X yourcontainername` could be an alternative if you have sufficient network throughput.
 
 ### So where is my data? ###
-If you let all storage option remain the default values, then the configuration is stored on the default pool under the name "deCONZ-data". To list the storage pools enter: `lxc storage ls`.
+If you let all storage option remain as the default values, then the configuration is stored on the default pool under the name "deCONZ-data". To list the storage pools enter: `lxc storage ls`.
 
     +---------+--------+--------------------------------------------+-------------+---------+
     |  NAME   | DRIVER |                   SOURCE                   | DESCRIPTION | USED BY |
@@ -72,7 +72,7 @@ Then to list the content of the default pool enter: `lxc storage volume ls defau
 
 Note that the deCONZ-DATA field "TYPE" is "custom" for your persistent data.
 
-If you would like to access the files without having to go through the container the can be found in your hosts file system while the container is running. However it is only accessible from the correct namespace as root. Enter the correct namespace as root by enter: `sudo nsenter -t $(cat /var/snap/lxd/common/lxd.pid) -m` 
+If you would like to access the files without having to go through the container they can be found in your hosts file system while the container is running. However it is only accessible from the correct namespace as root. Enter the correct namespace as root by enter: `sudo nsenter -t $(cat /var/snap/lxd/common/lxd.pid) -m` 
 
 Then you can list the files.
 
